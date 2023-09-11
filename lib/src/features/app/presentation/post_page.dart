@@ -12,9 +12,12 @@ class PostPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bodyController = TextEditingController();
+    // エラー処理用のref.listen
     ref.listen<AsyncValue<void>>(
       postNotifierProvider,
       (prev, next) {
+        // nullのデータが入ってきたら、スナックバーを表示する
+        // AsyncErrorが発生したら、isで判定して、データ型が同じになるので、スナックバーが出る。
         if (next is AsyncError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(next.error.toString())),
@@ -22,7 +25,7 @@ class PostPage extends ConsumerWidget {
         }
       },
     );
-
+    // Streamで全てのデータを取得する。
     final postAsyncValue = ref.watch(postStreamProvider);
 
     return Scaffold(
@@ -76,11 +79,6 @@ class PostPage extends ConsumerWidget {
                           icon: const Icon(Icons.delete),
                           onPressed: () async {
                             final postId = posts[index].id;
-                            // await ref
-                            //     .read(fireStoreProvider)
-                            //     .collection('post')
-                            //     .doc(postId)
-                            //     .delete();
                             await ref
                                 .read(postNotifierProvider.notifier)
                                 .deletePost(postId);
