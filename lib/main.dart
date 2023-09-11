@@ -1,6 +1,6 @@
 import 'package:architecture_app/firebase_options.dart';
+import 'package:architecture_app/src/features/app/presentation/post_page.dart';
 import 'package:architecture_app/src/features/auth/data/auth_provider.dart';
-import 'package:architecture_app/src/features/auth/presentation/hoge_page.dart';
 import 'package:architecture_app/src/features/auth/presentation/signin_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,13 +31,13 @@ class MyApp extends StatelessWidget {
             foregroundColor: Colors.white,
             centerTitle: true,
           )),
-      home: const HomePage(),
+      home: const SplashScreen(),
     );
   }
 }
-
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+// 認証が通っていればPostPage、通っていなければSignInPageを表示する
+class SplashScreen extends ConsumerWidget {
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +45,7 @@ class HomePage extends ConsumerWidget {
     final authStateAsync = ref.watch(authStateChangesProvider);
     // パターンマッチングを使用して、状態をUIにマッピングする
     return authStateAsync.when(
-      data: (user) => user != null ? const HogePage() : const SignInPage(),
+      data: (user) => user != null ? const PostPage() : const SignInPage(),
       loading: () => const CircularProgressIndicator(),
       error: (err, stack) => Text('Error: $err'),
     );

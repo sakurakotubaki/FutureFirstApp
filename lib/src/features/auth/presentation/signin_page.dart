@@ -1,5 +1,4 @@
 import 'package:architecture_app/src/features/auth/application/auth_notifier.dart';
-import 'package:architecture_app/src/features/auth/data/auth_provider.dart';
 import 'package:architecture_app/src/features/auth/presentation/widget/auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
