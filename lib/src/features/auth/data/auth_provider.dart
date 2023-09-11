@@ -1,13 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
+
+// auth用のLogger
+final authLogger = Provider((ref) => Logger());
 
 // FirebaseAuthのインスタンスを提供するProvider
-final firebaseProvider = Provider((ref) => FirebaseAuth.instance);
+final firebaseAuthProvider = Provider((ref) => FirebaseAuth.instance);
 
 // ログイン状態を管理するStreamProvider
-final authStateChangesProvider =
-    StreamProvider((ref) => ref.watch(firebaseProvider).authStateChanges());
+final authStateChangesProvider = StreamProvider((ref) {
+  return ref.watch(firebaseAuthProvider).authStateChanges();
+});
 
 // uidを提供するProvider
-final uidProvider =
-    Provider((ref) => ref.watch(firebaseProvider).currentUser?.uid);
+final uidProvider = Provider((ref) {
+  final user = ref.watch(firebaseAuthProvider).currentUser?.uid;
+  if (user != null) {
+    return user;
+  } else {
+    throw Exception('ユーザーがサインインしていません！');
+  }
+});
