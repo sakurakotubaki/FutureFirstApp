@@ -27,9 +27,9 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           // テーマを使ってAppBar全体にスタイルを適用する.
           appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.indigoAccent,
-            foregroundColor: Colors.white,
-            centerTitle: true,
+            backgroundColor: Colors.indigoAccent,// AppBarの背景色
+            foregroundColor: Colors.white,// AppBarのテキストの色
+            centerTitle: true,// AndroidのAppBarを真ん中に配置する
           )),
       home: const SplashScreen(),
     );

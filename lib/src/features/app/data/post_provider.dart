@@ -16,16 +16,13 @@ final fireStoreProvider = Provider((ref) => FirebaseFirestore.instance);
 autoDisposeを使うと、ページから離れたときに、状態を破棄する。
 */
 final postStreamProvider = StreamProvider.autoDispose<List<Post>>((ref) {
-  final fireStore = ref.read(fireStoreProvider);
-  final logger = ref.read(fireStoreLoggerProvider);
-  final postRef = fireStore.collection('post');
-  final snapshots = postRef.snapshots();
-  return snapshots.map((snapshot) {
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      final id = doc.id;
-      logger.d(doc.data());
-      return Post.fromJson(doc.data());
-    }).toList();
+  // ここで、FirebaseFirestoreのインスタンスを取得している。
+  final snapshot = ref.watch(fireStoreProvider).collection('post').snapshots();// snapshotで全てのデータを取得できる。
+  return snapshot.map((snapshot) {// ここで、QuerySnapshotを取得する。
+    return snapshot.docs.map((doc) {// ここで、QuerySnapshotからQueryDocumentSnapshotを取得する。
+      final data = doc.data();// ここで、QueryDocumentSnapshotを取得する。
+      data['id'] = doc.id;// QueryDocumentSnapshotが取れているので、documentIDをここで取得できる。
+      return Post.fromJson(data);// ここのfromJsonでモデルクラスに変換している。
+    }).toList();// ここでList<Post>に変換している。
   });
 });

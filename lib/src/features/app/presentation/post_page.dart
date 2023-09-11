@@ -1,7 +1,7 @@
 import 'package:architecture_app/src/features/app/application/post_notifier.dart';
+import 'package:architecture_app/src/features/app/data/post_provider.dart';
 import 'package:architecture_app/src/features/app/domain/post/post.dart';
 import 'package:architecture_app/src/features/auth/application/auth_notifier.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,6 +22,8 @@ class PostPage extends ConsumerWidget {
         }
       },
     );
+
+    final postAsyncValue = ref.watch(postStreamProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -60,6 +62,42 @@ class PostPage extends ConsumerWidget {
                   await ref.read(postNotifierProvider.notifier).sendPost(post);
                 },
                 child: const Text('投稿')),
+            Expanded(
+              child: postAsyncValue.when(
+                data: (posts) {
+                  return ListView.builder(
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      final post = posts[index];
+                      return ListTile(
+                        title: Text(post.body),
+                        subtitle: Text(post.createdAt.toString()),
+                        leading: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () async {
+                            final postId = posts[index].id;
+                            // await ref
+                            //     .read(fireStoreProvider)
+                            //     .collection('post')
+                            //     .doc(postId)
+                            //     .delete();
+                            await ref
+                                .read(postNotifierProvider.notifier)
+                                .deletePost(postId);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                error: (error, stackTrace) => Center(
+                  child: Text(error.toString()),
+                ),
+              ),
+            ),
           ],
         ),
       ),
